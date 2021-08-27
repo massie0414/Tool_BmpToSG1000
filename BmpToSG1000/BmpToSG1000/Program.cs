@@ -64,7 +64,7 @@ namespace BmpToSG1000
             for (int color = 0; color < color_max; color++)
             {
                 int[,] b = new int[height, width];
-                int[] gp = new int[width];
+                int gp = 0;
 
                 for (int y = 0; y < height; y++)
                 {
@@ -97,71 +97,74 @@ namespace BmpToSG1000
                 int count = 0;
 
                 Console.Write("const unsigned char "+fileName.Split('.')[0]+"TileData[] = {");
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < height / 8; y++)
                 {
                     for (int x = 0; x < width / 8; x++)
                     {
-                        if (count % 8 == 0)
+                        for (int yy = 0; yy < 8; yy++)
                         {
-                            Console.Write(" ");
-                        }
+                            if (count % 8 == 0)
+                            {
+                                Console.Write(" ");
+                            }
 
-                        if (count % 32 == 0)
-                        {
-                            Console.WriteLine("");
-                            Console.Write("\t");
-                        }
+                            if (count % 32 == 0)
+                            {
+                                Console.WriteLine("");
+                                Console.Write("\t");
+                            }
 
-                        gp[x] = (byte)(
-                              b[y, width - 1 - 7 - x * 8]
-                            + b[y, width - 1 - 6 - x * 8] * 0x02
-                            + b[y, width - 1 - 5 - x * 8] * 0x04
-                            + b[y, width - 1 - 4 - x * 8] * 0x08
-                            + b[y, width - 1 - 3 - x * 8] * 0x10
-                            + b[y, width - 1 - 2 - x * 8] * 0x20
-                            + b[y, width - 1 - 1 - x * 8] * 0x40
-                            + b[y, width - 1 - 0 - x * 8] * 0x80
-                            );
+                            gp = (byte)(
+                                  b[y * 8 + yy, width - 1 - 7 - x * 8]
+                                + b[y * 8 + yy, width - 1 - 6 - x * 8] * 0x02
+                                + b[y * 8 + yy, width - 1 - 5 - x * 8] * 0x04
+                                + b[y * 8 + yy, width - 1 - 4 - x * 8] * 0x08
+                                + b[y * 8 + yy, width - 1 - 3 - x * 8] * 0x10
+                                + b[y * 8 + yy, width - 1 - 2 - x * 8] * 0x20
+                                + b[y * 8 + yy, width - 1 - 1 - x * 8] * 0x40
+                                + b[y * 8 + yy, width - 1 - 0 - x * 8] * 0x80
+                                );
 
-                        /*
-                        if (color == 0)
-                        {
-                            imageList.Add((byte)gp[i]);
-                        }
-                        else if (color == 1)
-                        {
-                            maskList.Add((byte)gp[i]);
-                        }
-                        */
+                            /*
+                            if (color == 0)
+                            {
+                                imageList.Add((byte)gp[i]);
+                            }
+                            else if (color == 1)
+                            {
+                                maskList.Add((byte)gp[i]);
+                            }
+                            */
 
-                        Console.Write("0x" + gp[x].ToString("X2"));
-                        //if (x == width / 8 - 1 )
-                        //{
-                        //    Console.WriteLine(",");
-                        //}
-                        //else if (x % 8 == 7)
-                        //{
-                        //    Console.WriteLine(",");
-                        //    Console.Write("\t");
-                        //}
-                        //else
-                        //{
+                            Console.Write("0x" + gp.ToString("X2"));
+                            //if (x == width / 8 - 1 )
+                            //{
+                            //    Console.WriteLine(",");
+                            //}
+                            //else if (x % 8 == 7)
+                            //{
+                            //    Console.WriteLine(",");
+                            //    Console.Write("\t");
+                            //}
+                            //else
+                            //{
                             Console.Write(",");
-                        //}
+                            //}
 
-                        count++;
+                            count++;
 
-                        if (x == width_size - 1)
-                        {
-                            break;
+                            //if (x == width_size - 1)
+                            //{
+                            //    break;
+                            //}
                         }
                     }
                     //Console.WriteLine("");
 
-                    if (y == height_size - 1)
-                    {
-                        break;
-                    }
+                    //if (y == height_size - 1)
+                    //{
+                    //    break;
+                    //}
                 }
                 Console.WriteLine("");
                 Console.WriteLine("};");
@@ -199,18 +202,18 @@ namespace BmpToSG1000
             */
 
             // タイルマップ（ダミー）
-            int mapCount = 0;
+            int mapCount = 1;   // １スタート
             Console.Write("const unsigned char " + fileName.Split('.')[0] + "TileMapData[] = {");
             for (int y = 0; y < height / 8; y++)
             {
                 for (int x = 0; x < width / 8; x++)
                 {
-                    if (mapCount % 8 == 0)
+                    if (mapCount % 8 == 1)
                     {
                         Console.Write(" ");
                     }
 
-                    if (mapCount % 32 == 0)
+                    if (mapCount % 32 == 1)
                     {
                         Console.WriteLine("");
                         Console.Write("\t");
@@ -223,6 +226,8 @@ namespace BmpToSG1000
             Console.WriteLine("");
             Console.WriteLine("};");
             Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataSize " + mapCount);
+            Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataWidth " + width / 8);
+            Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataHeight " + height / 8);
             Console.WriteLine("");
 
             // 色（白黒固定）
