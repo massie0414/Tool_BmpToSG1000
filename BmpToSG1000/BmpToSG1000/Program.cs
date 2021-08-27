@@ -6,83 +6,17 @@ namespace BmpToSG1000
 {
     class Program
     {
-        //  const int color_max = 1;
         const int color_max = 2;
-        //  const int color_max = 3;
-        //  const int color_max = 4;
-
-        // 入力サイズ
-        const int width = 160;  // TODO 動的にしたい
-        const int height = 64;  // TODO 動的にしたい
-        // ??
-        //const int width = 96;  // TODO 動的にしたい
-        //const int height = 136;  // TODO 動的にしたい
-        // バトルのキャラサイズ
-        //const int width = 48;  // TODO 動的にしたい
-        //const int height = 144;  // TODO 動的にしたい
-        // マップのキャラサイズ
-        //const int width = 16;  // TODO 動的にしたい
-        //const int height = 96;  // TODO 動的にしたい
-        // オープニングの文字
-        //const int width = 160;  // TODO 動的にしたい
-        //const int height = 80;  // TODO 動的にしたい
 
         // 出力時のサイズ
         const int width_size = 160;  // 0~160
         const int height_size = 8;  // 0~8
-        // 顔のサイズ
-        //const int width_size = 5*8;  // 0~160
-        //const int height_size = 6;  // 0~8
-        // バトルのキャラサイズ
-        //const int width_size = 48;  // 0~160
-        //const int height_size = 144/8;  // 0~8
-        // マップのキャラサイズ
-        //const int width_size = 16;  // 0~160
-        //const int height_size = 96/8;  // 0~8
-        // 文字
-        //const int width_size = 7*14;  // 0~160
-        //const int height_size = 2;  // 0~8
-        // 吹き出し
-        //const int width_size = 8 * 14;  // 0~160
-        //const int height_size = 3;  // 0~8
-        // オープニングの文字
-        //const int width_size = 7*12;  // 0~160
-        //const int height_size = 10;  // 0~8
-        // ステータスウィンドウ
-        //const int width_size = 50;  // 0~160
-        //const int height_size = 6;  // 0~8
-        // ステータス画面の名前
-        //const int width_size = 7 * 6;  // 0~160
-        //const int height_size = 1;  // 0~8
-        // 目パチ、口パク
-        //const int width_size = 8;  // 0~160
-        //const int height_size = 2;  // 0~8
-        // ロード画面：はじめから
-        //const int width_size = 8*6;  // 0~160
-        // const int height_size = 3;  // 0~8
-        // ロード画面：つづきから
-        //const int width_size = 8 * 17;  // 0~160
-        //const int height_size = 6;  // 0~8
-        // RETRY
-        //const int width_size = 7*12 ;  // 0~160
-        //const int height_size = 1;  // 0~8
-
-        // 入力ファイルの最終アドレス
-        //const int file_end_address = 20789;  // 144x48
-        const int file_end_address = 30773;  // 160x64
-        //const int file_end_address = 0x9935;  // 96x136
-        //const int file_end_address = 0x48035;  // 384x256
-        //const int file_end_address = 0x6C035;  // 384x384
-        // バトルのキャラサイズ
-        //const int file_end_address = 0x5135;  // 48x144
-        // マップのキャラサイズ
-        //const int file_end_address = 0x1235;  // 16x96
-        // オープニングの文字
-        //const int file_end_address = 0x9635;  // 160x80
-
 
         static void Main(string[] args)
         {
+            int width  = 0;
+            int height = 0;
+
             string fileName = "convert.bmp";
             if (args.Length > 0)
             {
@@ -91,7 +25,13 @@ namespace BmpToSG1000
             }
             Console.WriteLine("fileName="+fileName);
 
-            int[] ints = new int[file_end_address + 1];
+            // ファイルサイズの取得
+            FileInfo file = new FileInfo(fileName);
+            long fileSize = file.Length;
+            int file_end_address = (int)fileSize - 1;
+            Console.WriteLine("file_end_address=" + file_end_address);
+
+            int[] ints = new int[fileSize];
             List<byte> imageList = new List<byte>();
             List<byte> maskList = new List<byte>();
 
@@ -100,7 +40,7 @@ namespace BmpToSG1000
             {
                 try
                 {
-                    for (int i = 0; i < file_end_address + 1; i++)
+                    for (int i = 0; i < fileSize; i++)
                     {
                         ints[i] = w.ReadByte();
                     }
@@ -110,6 +50,16 @@ namespace BmpToSG1000
                     Console.Write("\n");
                 }
             }
+
+            // ここでファイルサイズを取得する
+            // 0x12 x                0x16 y
+            width   = ints[0x12];
+            width  += ints[0x13] * 256;
+            height  = ints[0x16];
+            height += ints[0x17] * 256;
+
+            Console.WriteLine("width=" + width);
+            Console.WriteLine("height=" + height);
 
             for (int color = 0; color < color_max; color++)
             {
