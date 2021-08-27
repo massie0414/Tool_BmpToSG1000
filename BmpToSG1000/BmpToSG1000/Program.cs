@@ -19,13 +19,13 @@ namespace BmpToSG1000
                 string[] pathName = args[0].Split('\\');
                 fileName = pathName[pathName.Length-1];
             }
-            Console.WriteLine("fileName="+fileName);
+            //Console.WriteLine("fileName="+fileName);
 
             // ファイルサイズの取得
             FileInfo file = new FileInfo(fileName);
             long fileSize = file.Length;
             int file_end_address = (int)fileSize - 1;
-            Console.WriteLine("file_end_address=" + file_end_address);
+            //Console.WriteLine("file_end_address=" + file_end_address);
 
             int[] ints = new int[fileSize];
             //List<byte> imageList = new List<byte>();
@@ -54,8 +54,8 @@ namespace BmpToSG1000
             height  = ints[0x16];
             height += ints[0x17] * 256;
 
-            Console.WriteLine("width=" + width);
-            Console.WriteLine("height=" + height);
+            //Console.WriteLine("width=" + width);
+            //Console.WriteLine("height=" + height);
 
             // 出力時のサイズ
             int width_size = width / 8;
@@ -96,18 +96,17 @@ namespace BmpToSG1000
 
                 int count = 0;
 
-                Console.Write("const unsigned char "+fileName.Split('.')[0]+"Data[] = {");
+                Console.Write("const unsigned char "+fileName.Split('.')[0]+"TileData[] = {");
                 for (int y = 0; y < height; y++)
                 {
                     for (int x = 0; x < width / 8; x++)
                     {
                         if (count % 8 == 0)
                         {
-                            Console.WriteLine("");
-                            Console.Write("\t");
+                            Console.Write(" ");
                         }
 
-                        if (count % 64 == 0)
+                        if (count % 32 == 0)
                         {
                             Console.WriteLine("");
                             Console.Write("\t");
@@ -166,6 +165,8 @@ namespace BmpToSG1000
                 }
                 Console.WriteLine("");
                 Console.WriteLine("};");
+                Console.WriteLine("#define "+fileName.Split('.')[0]+"TileDataSize " + count);
+                Console.WriteLine("");
             }
 
             // ファイル書き込み
@@ -196,6 +197,61 @@ namespace BmpToSG1000
                 }
             }
             */
+
+            // タイルマップ（ダミー）
+            int mapCount = 0;
+            Console.Write("const unsigned char " + fileName.Split('.')[0] + "TileMapData[] = {");
+            for (int y = 0; y < height / 8; y++)
+            {
+                for (int x = 0; x < width / 8; x++)
+                {
+                    if (mapCount % 8 == 0)
+                    {
+                        Console.Write(" ");
+                    }
+
+                    if (mapCount % 32 == 0)
+                    {
+                        Console.WriteLine("");
+                        Console.Write("\t");
+                    }
+
+                    Console.Write("0x" + mapCount.ToString("X2") + ",");
+                    mapCount++;
+                }
+            }
+            Console.WriteLine("");
+            Console.WriteLine("};");
+            Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataSize " + mapCount);
+            Console.WriteLine("");
+
+            // 色（白黒固定）
+            int colourCount = 0;
+            Console.Write("const unsigned char " + fileName.Split('.')[0] + "ColourData[] = {");
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width / 8; x++)
+                {
+                    if (colourCount % 8 == 0)
+                    {
+                        Console.Write(" ");
+                    }
+
+                    if (colourCount % 32 == 0)
+                    {
+                        Console.WriteLine("");
+                        Console.Write("\t");
+                    }
+
+                    // TODO 白黒固定
+                    Console.Write("0xF1,");
+                    colourCount++;
+                }
+            }
+            Console.WriteLine("");
+            Console.WriteLine("};");
+            Console.WriteLine("#define " + fileName.Split('.')[0] + "ColourDataSize " + colourCount);
+            Console.WriteLine("");
 
             System.Threading.Thread.Sleep(100000);
         }
