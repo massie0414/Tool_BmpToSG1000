@@ -6,11 +6,7 @@ namespace BmpToSG1000
 {
     class Program
     {
-        const int color_max = 2;
-
-        // 出力時のサイズ
-        const int width_size = 160;  // 0~160
-        const int height_size = 8;  // 0~8
+        const int color_max = 1;
 
         static void Main(string[] args)
         {
@@ -32,8 +28,8 @@ namespace BmpToSG1000
             Console.WriteLine("file_end_address=" + file_end_address);
 
             int[] ints = new int[fileSize];
-            List<byte> imageList = new List<byte>();
-            List<byte> maskList = new List<byte>();
+            //List<byte> imageList = new List<byte>();
+            //List<byte> maskList = new List<byte>();
 
             // 1バイトずつ読み出し。
             using (BinaryReader w = new BinaryReader(File.OpenRead(fileName)))
@@ -61,55 +57,74 @@ namespace BmpToSG1000
             Console.WriteLine("width=" + width);
             Console.WriteLine("height=" + height);
 
+            // 出力時のサイズ
+            int width_size = width / 8;
+            int height_size = height;
+
             for (int color = 0; color < color_max; color++)
             {
                 int[,] b = new int[height, width];
                 int[] gp = new int[width];
 
-                for (int i = 0; i < height; i++)
+                for (int y = 0; y < height; y++)
                 {
-                    for (int j = 0; j < width; j++)
+                    for (int x = 0; x < width; x++)
                     {
                         for (int l = 0; l < 3; l++)
                         {
-                            int index = (file_end_address - i * width * 3 - j * 3 - l);    // 160x64
-                            b[i, j] += ((ints[index]));
+                            int index = (file_end_address - y * width * 3 - x * 3 - l);
+                            b[y, x] += ((ints[index]));
                         }
                         switch (color_max)
                         {
                             case 1:
-                                b[i, j] = Reversal2(b[i, j]);
+                                b[y, x] = Reversal2(b[y, x]);
                                 break;
                             case 2:
-                                b[i, j] = Reversal3(b[i, j], color);
+                                b[y, x] = Reversal3(b[y, x], color);
                                 break;
                             case 3:
-                                b[i, j] = Reversal4(b[i, j], color);
+                                b[y, x] = Reversal4(b[y, x], color);
                                 break;
                             case 4:
-                                b[i, j] = Reversal5(b[i, j], color);
+                                b[y, x] = Reversal5(b[y, x], color);
                                 break;
                         }
                     }
                 }
-                Console.WriteLine("\t{");
-                //Console.Write("{");
-                for (int j = 0; j < height / 8; j++)
+
+
+                int count = 0;
+
+                Console.Write("const unsigned char "+fileName.Split('.')[0]+"Data[] = {");
+                for (int y = 0; y < height; y++)
                 {
-                    Console.Write("\t");
-                    for (int i = 0; i < width; i++)
+                    for (int x = 0; x < width / 8; x++)
                     {
-                        gp[i] = (byte)(
-                              b[0 + j * 8, width - 1 - i]
-                            + b[1 + j * 8, width - 1 - i] * 0x02
-                            + b[2 + j * 8, width - 1 - i] * 0x04
-                            + b[3 + j * 8, width - 1 - i] * 0x08
-                            + b[4 + j * 8, width - 1 - i] * 0x10
-                            + b[5 + j * 8, width - 1 - i] * 0x20
-                            + b[6 + j * 8, width - 1 - i] * 0x40
-                            + b[7 + j * 8, width - 1 - i] * 0x80
+                        if (count % 8 == 0)
+                        {
+                            Console.WriteLine("");
+                            Console.Write("\t");
+                        }
+
+                        if (count % 64 == 0)
+                        {
+                            Console.WriteLine("");
+                            Console.Write("\t");
+                        }
+
+                        gp[x] = (byte)(
+                              b[y, width - 1 - 7 - x * 8]
+                            + b[y, width - 1 - 6 - x * 8] * 0x02
+                            + b[y, width - 1 - 5 - x * 8] * 0x04
+                            + b[y, width - 1 - 4 - x * 8] * 0x08
+                            + b[y, width - 1 - 3 - x * 8] * 0x10
+                            + b[y, width - 1 - 2 - x * 8] * 0x20
+                            + b[y, width - 1 - 1 - x * 8] * 0x40
+                            + b[y, width - 1 - 0 - x * 8] * 0x80
                             );
 
+                        /*
                         if (color == 0)
                         {
                             imageList.Add((byte)gp[i]);
@@ -118,40 +133,43 @@ namespace BmpToSG1000
                         {
                             maskList.Add((byte)gp[i]);
                         }
+                        */
 
-                        Console.Write("0x" + gp[i].ToString("X2"));
-                        if (i == width - 1)
-                        {
-                            Console.WriteLine(",");
-                        }
-                        else if (i % 8 == 7)
-                        {
-                            Console.WriteLine(",");
-                            Console.Write("\t");
-
-                            //Console.Write(",");
-                        }
-                        else
-                        {
+                        Console.Write("0x" + gp[x].ToString("X2"));
+                        //if (x == width / 8 - 1 )
+                        //{
+                        //    Console.WriteLine(",");
+                        //}
+                        //else if (x % 8 == 7)
+                        //{
+                        //    Console.WriteLine(",");
+                        //    Console.Write("\t");
+                        //}
+                        //else
+                        //{
                             Console.Write(",");
-                        }
+                        //}
 
-                        if (i == width_size - 1)
+                        count++;
+
+                        if (x == width_size - 1)
                         {
                             break;
                         }
                     }
-                    Console.WriteLine("");
+                    //Console.WriteLine("");
 
-                    if (j == height_size - 1)
+                    if (y == height_size - 1)
                     {
                         break;
                     }
                 }
-                Console.WriteLine("\t},");
+                Console.WriteLine("");
+                Console.WriteLine("};");
             }
 
             // ファイル書き込み
+            /*
             using (Stream stream = File.OpenWrite("image.dat"))
             {
                 // streamに書き込むためのBinaryWriterを作成
@@ -163,7 +181,9 @@ namespace BmpToSG1000
                     }
                 }
             }
+            */
 
+            /*
             using (Stream stream = File.OpenWrite("mask.dat"))
             {
                 // streamに書き込むためのBinaryWriterを作成
@@ -175,6 +195,7 @@ namespace BmpToSG1000
                     }
                 }
             }
+            */
 
             System.Threading.Thread.Sleep(100000);
         }
@@ -190,7 +211,7 @@ namespace BmpToSG1000
         /*
          * 5階調
          * BMPは白が765 黒が0
-         * ポケコンは黒が1、白が0
+         * SG1000は黒が1、白が0
          */
         private static int Reversal5(int b, int type)
         {
@@ -227,7 +248,7 @@ namespace BmpToSG1000
         /*
          * 4階調
          * BMPは白が765 黒が0
-         * ポケコンは黒が1、白が0
+         * SG1000は黒が1、白が0
          */
         private static int Reversal4(int b, int type)
         {
@@ -258,7 +279,7 @@ namespace BmpToSG1000
         /*
          * 3階調
          * BMPは白が765 黒が0
-         * ポケコンは黒が1、白が0
+         * SG1000は黒が1、白が0
          */
         private static int Reversal3(int b, int type)
         {
@@ -283,13 +304,11 @@ namespace BmpToSG1000
         /*
          * 2階調
          * BMPは白が765 黒が0
-         * ポケコンは黒が1、白が0
+         * SG1000は黒が1、白が0
          */
         private static int Reversal2(int b)
         {
             if (b < 100)
-            //if (b < 384)
-            //if (b < 600)
             {
                 return 1;
             }
