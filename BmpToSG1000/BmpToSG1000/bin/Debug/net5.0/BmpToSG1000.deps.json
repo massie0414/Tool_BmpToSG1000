@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "BmpToSG1000/1.0.0": {
+        "runtime": {
+          "BmpToSG1000.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BmpToSG1000/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

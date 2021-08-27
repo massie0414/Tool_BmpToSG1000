@@ -1,0 +1,16 @@
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\bin\Debug\net5.0\BmpToSG1000.exe
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\bin\Debug\net5.0\BmpToSG1000.deps.json
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\bin\Debug\net5.0\BmpToSG1000.runtimeconfig.json
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\bin\Debug\net5.0\BmpToSG1000.runtimeconfig.dev.json
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\bin\Debug\net5.0\BmpToSG1000.dll
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\bin\Debug\net5.0\ref\BmpToSG1000.dll
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\bin\Debug\net5.0\BmpToSG1000.pdb
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.csproj.AssemblyReference.cache
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.GeneratedMSBuildEditorConfig.editorconfig
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.AssemblyInfoInputs.cache
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.AssemblyInfo.cs
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.csproj.CoreCompileInputs.cache
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.dll
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\ref\BmpToSG1000.dll
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.pdb
+D:\apps_tool\Tool_BmpToSG1000\BmpToSG1000\BmpToSG1000\obj\Debug\net5.0\BmpToSG1000.genruntimeconfig.cache
