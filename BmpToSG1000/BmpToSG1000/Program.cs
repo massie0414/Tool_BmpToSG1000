@@ -202,18 +202,19 @@ namespace BmpToSG1000
             */
 
             // タイルマップ（ダミー）
-            int mapCount = 1;   // １スタート
+            const int mapCountStart = 1;   // １スタート
+            int mapCount = mapCountStart;
             Console.Write("const unsigned char " + fileName.Split('.')[0] + "TileMapData[] = {");
             for (int y = 0; y < height / 8; y++)
             {
                 for (int x = 0; x < width / 8; x++)
                 {
-                    if (mapCount % 8 == 1)
+                    if (mapCount % 8 == mapCountStart)
                     {
                         Console.Write(" ");
                     }
 
-                    if (mapCount % 32 == 1)
+                    if (mapCount % 32 == mapCountStart)
                     {
                         Console.WriteLine("");
                         Console.Write("\t");
@@ -225,7 +226,7 @@ namespace BmpToSG1000
             }
             Console.WriteLine("");
             Console.WriteLine("};");
-            Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataSize " + mapCount);
+            Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataSize " + (mapCount - mapCountStart));
             Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataWidth " + width / 8);
             Console.WriteLine("#define " + fileName.Split('.')[0] + "TileMapDataHeight " + height / 8);
             Console.WriteLine("");
